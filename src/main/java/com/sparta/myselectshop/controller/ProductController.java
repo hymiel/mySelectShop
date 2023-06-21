@@ -31,8 +31,15 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<ProductResponseDto> getProduct(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ProductService.getProduct(userDetails.getUser());
+    public List<ProductResponseDto> getProduct(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ProductService.getProduct(userDetails.getUser(),
+                page-1, size, sortBy, isAsc
+        );
     }
 
     @GetMapping("/admin/products")
