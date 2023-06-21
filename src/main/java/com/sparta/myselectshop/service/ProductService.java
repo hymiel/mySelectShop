@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
+    private static ProductRepository productRepository;
     public static final int MIN_MY_PRICE = 100;
 
 
@@ -38,7 +38,7 @@ public class ProductService {
 
         return new ProductResponseDto(product);
     }
-    public List<ProductResponseDto> getProduct() {
+    public static List<ProductResponseDto> getProduct() {
         List<Product> productList = productRepository.findAll();
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
         for (Product product : productList) {
