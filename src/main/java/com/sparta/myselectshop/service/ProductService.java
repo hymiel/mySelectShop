@@ -50,7 +50,7 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
     @Transactional(readOnly = true)
-    public static Page<ProductResponseDto> getProduct(User user, int page, int size, String sortBy, boolean isAsc) {
+    public Page<ProductResponseDto> getProduct(User user, int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction,sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -102,5 +102,19 @@ public class ProductService {
 
         // 등록
         productFolderRepository.save(new ProductFolder(product, folder));
+    }
+
+    public Page<ProductResponseDto> getProductsInFolder(Long foldetId, int page, int size, String sortBy, boolean isAsc, User user) {
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction,sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> productList = productRepository.findAllByUserAndProductFolderList_FolderId(user, foldetId, pageable);
+
+        Page<ProductResponseDto> responseDtosList = productList.map(ProductResponseDto::new);
+
+        return responseDtosList;
+
     }
 }
