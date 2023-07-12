@@ -14,18 +14,17 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class FolderController {
-
     private final FolderService folderService;
 
-
     @PostMapping("/folders")
-    public void addFolders(@RequestBody FolderRequestDto folderRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public void addFolder(@RequestBody FolderRequestDto folderRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<String> folderNames = folderRequestDto.getFolderNames();
         folderService.addFolders(folderNames, userDetails.getUser());
+
     }
 
     @GetMapping("/folders")
-    public List<FolderResponseDto> getFolders(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<FolderResponseDto> getFolders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return folderService.getFolders(userDetails.getUser());
     }
 

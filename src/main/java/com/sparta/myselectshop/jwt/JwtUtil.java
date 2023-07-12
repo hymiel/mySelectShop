@@ -54,9 +54,15 @@ public class JwtUtil {
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+        if (StringUtils.hasText(bearerToken)) { //카카오 로그인해서 api 확인 할 때 bearer 직접 추가하지 않아도 되도록 함
+            if(bearerToken.startsWith(BEARER_PREFIX)){
+                return bearerToken.substring(7);
+            }
+            return bearerToken;
         }
+        /*if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
+        }*/
         return null;
     }
 

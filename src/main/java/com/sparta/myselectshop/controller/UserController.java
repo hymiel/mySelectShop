@@ -3,7 +3,6 @@ package com.sparta.myselectshop.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.myselectshop.dto.SignupRequestDto;
 import com.sparta.myselectshop.dto.UserInfoDto;
-import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.security.UserDetailsImpl;
@@ -11,7 +10,6 @@ import com.sparta.myselectshop.service.FolderService;
 import com.sparta.myselectshop.service.KakaoService;
 import com.sparta.myselectshop.service.UserService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final FolderService folderService;
     private final KakaoService kakaoService;
 
@@ -74,19 +71,19 @@ public class UserController {
     }
 
     @GetMapping("/user-folder")
-    public  String getUserInfo(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public String getUserInfo(Model model,@AuthenticationPrincipal UserDetailsImpl userDetails){
         model.addAttribute("folders",folderService.getFolders(userDetails.getUser()));
+
         return "index :: #fragment";
     }
 
     @GetMapping("/user/kakao/callback")
-    public String kakakoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        String token = kakaoService.kakaoLogin(code);
-
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token);
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        //jwt를 쿠키에 넣을 떄는 HttpServletResponse 를 사용해서 받는다.
+        String token=kakaoService.kakaoLogin(code);
+        Cookie cookie =new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7)); //카카오 로그인 할 떄는 bearer 붙어있으면 안되나벼 오류뜨네
         cookie.setPath("/");
         response.addCookie(cookie);
-
         return "redirect:/";
     }
 }

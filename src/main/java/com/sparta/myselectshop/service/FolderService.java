@@ -12,37 +12,38 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class FolderService {
 
     private final FolderRepository folderRepository;
-
     public void addFolders(List<String> folderNames, User user) {
-        List<Folder> existFolderList = folderRepository.findAllUserAndNameIn(user, folderNames);
-        List<Folder> folderList = new ArrayList<>();
+        List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user,folderNames);
 
-        for (String folderName : folderNames) {
-            if (!isExistFolderName(folderName, existFolderList)){
-                Folder folde = new Folder(folderName, user);
-                folderList.add(folde);
-            } else {
-               throw new IllegalArgumentException("폴더명이 중복되었습니다.");
+        List<Folder> folderList = new ArrayList<>();
+        for(String folderName:folderNames){
+            if(!isExistFolderName(folderName,existFolderList)){
+                Folder folder= new Folder(folderName,user);
+                folderList.add(folder);
+            }else{
+                throw new IllegalArgumentException("중복된 폴더명을 제거해주세요! 폴더명: "+ folderName);
             }
         }
         folderRepository.saveAll(folderList);
     }
+
     public List<FolderResponseDto> getFolders(User user) {
         List<Folder> folderList = folderRepository.findAllByUser(user);
         List<FolderResponseDto> responseDtoList = new ArrayList<>();
 
-        for (Folder folder : folderList) {
+        for(Folder folder:folderList){
             responseDtoList.add(new FolderResponseDto(folder));
         }
+
         return responseDtoList;
     }
+
     private boolean isExistFolderName(String folderName, List<Folder> existFolderList) {
         for (Folder existFolder : existFolderList) {
-            if (folderName.equals(existFolder.getName())){
+            if(folderName.equals(existFolder.getName())){
                 return true;
             }
         }
